@@ -1,10 +1,27 @@
 const express = require('express');
-
+const mongoose = require('mongoose');
+const pageRoute = require('./routes/pageRoute');
+const courseRoute = require('./routes/courseRoute');
+const categoryRoute = require('./routes/categoryRoute');
 const app = express();
 
-app.get('/', (req, res) => {
-  res.status(200).send('INDEX');
+//CONNECT DB
+mongoose.connect('mongodb://localhost/smartedu-db').then(() => {
+  console.log('DB Connected Successfuly');
 });
+
+// TEMPLATE ENGINE
+app.set('view engine', 'ejs');
+
+// MIDDLEWARE
+app.use(express.static('public'));
+app.use(express.urlencoded({ extented: true }));
+app.use(express.json());
+
+// ROUTES
+app.use('/', pageRoute);
+app.use('/courses', courseRoute);
+app.use('/categories', categoryRoute);
 app.get('*', (req, res) => {
   res.status(404).send('PAGE NOT FOUND');
 });
